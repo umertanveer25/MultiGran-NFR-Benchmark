@@ -72,3 +72,11 @@ Audit any "first" claim against literature evidence.
   1. What is the ONE thing that is genuinely new?
   2. What is the ONE strongest scientific contribution?
   3. What is the ONE biggest problem preventing the novelty claim from being fully accepted?
+
+---
+
+# 8. MANDATORY RECENCY CONSTRAINT ON BASELINE PAPERS
+- **Strict Recency Horizon**: Primary baseline and comparative papers MUST NOT be older than 2 years from the current research date (strictly 2024, 2025, or 2026).
+- **OpenAlex Verification**: All baseline candidate papers must be discovered and verified through the OpenAlex scholarly database (`/literature-search-openalex`).
+- **Anchor Baseline**: The primary pure base paper for this benchmark is Abbas et al. (*IEEE Access*, 2024, OpenAlex: `W4401990274`), alongside Xanthopoulou et al. (*Springer LNNS*, 2025, OpenAlex: `W4408287838`) and Rahman et al. (*Elsevier ESWA*, 2026, OpenAlex: `W7160260692`).
+

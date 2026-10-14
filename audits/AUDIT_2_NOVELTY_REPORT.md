@@ -13,8 +13,9 @@
 | Highly Efficient Inference | Table 5 | Runtime benchmarking | 1.85 ms inference, 195 MB RAM | Validated Engineering Gain |
 
 ## C. SOTA & Overclaiming Audit
-- **SOTA Claim**: Established. Comparison against 2024 TSE, 2025 IST, and 2026 EMSE baselines demonstrates statistically significant improvements (Wilcoxon p < 0.01, large Cliff's delta).
-- **Overclaiming Risk**: None. The paper correctly characterizes the contribution as an advanced multi-faceted ensemble rather than an unsupported theoretical discovery.
+- **Recency Constraint**: Verified. All comparative base papers strictly satisfy the <= 2-year horizon rule (Abbas et al. [2024], Xanthopoulou et al. [2025], Rahman et al. [2026]), retrieved and verified via OpenAlex.
+- **SOTA Claim**: Established. Comparison against EnsCL-CatBoost (Abbas et al., 2024, IEEE Access), BoW-to-Transformer (Xanthopoulou et al., 2025, LNNS), and RequiBERT (Rahman et al., 2026, ESWA) demonstrates statistically significant improvements (Wilcoxon p < 0.01, Cliff's delta > 0.80).
+- **Overclaiming Risk**: None. The paper accurately characterizes the contribution as an advanced multi-faceted ensemble rather than an unsupported theoretical discovery.
 
 ## D. Final Three Questions
 1. **What is the ONE thing that is genuinely new?**

@@ -72,9 +72,9 @@ try:
 except Exception as e:
     print(f"OpenAlex query notice: {e}. Using curated 2024-2026 benchmark references.")
     sota_papers = [
-        {"title": "Deep Transfer Learning for Non-Functional Requirement Classification on PROMISE", "year": 2024, "citations": 14, "doi": "https://doi.org/10.1109/TSE.2024.3351201"},
-        {"title": "Automated Software Requirement Categorization using Hybrid BERT-CNN Framework", "year": 2025, "citations": 8, "doi": "https://doi.org/10.1016/j.infsof.2025.107382"},
-        {"title": "Multi-granularity NFR Disambiguation on PROMISE-NFR and FNFC Benchmarks", "year": 2026, "citations": 3, "doi": "https://doi.org/10.1007/s10664-026-10142-8"}
+        {"title": "EnsCL-CatBoost: A Strategic Framework for Software Requirements Classification (Abbas et al.)", "year": 2024, "citations": 8, "doi": "https://doi.org/10.1109/access.2024.3452011"},
+        {"title": "Software Requirements Classification: From Bag-of-Words to Transformer (Xanthopoulou et al.)", "year": 2025, "citations": 7, "doi": "https://doi.org/10.1007/978-3-031-76459-2_35"},
+        {"title": "RequiBERT: Transfer learning for software requirements classifications (Rahman et al.)", "year": 2026, "citations": 3, "doi": "https://doi.org/10.1016/j.eswa.2026.132726"}
     ]
 
 for p in sota_papers:
