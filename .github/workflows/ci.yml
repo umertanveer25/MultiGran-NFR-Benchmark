@@ -5,9 +5,11 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
-  test:
+  benchmark-and-verify:
+    name: Benchmark & Reproducibility Verification (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,10 +30,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Unit Tests
+      - name: Run Pytest Test Suite
+        env:
+          PYTHONPATH: .
         run: |
-          pytest tests/ -v
+          python -m pytest tests/ -v
 
-      - name: Verify Benchmark Pipeline Execution
+      - name: Verify Full Autonomous Pipeline Execution
+        env:
+          PYTHONPATH: .
         run: |
           python run_pipeline.py
+
+      - name: Upload Research Figures and Tables Artifacts
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-artifacts
+          path: |
+            figures/
+            tables/
+            audits/
+            paper/MDPI_Standard_Manuscript.md
