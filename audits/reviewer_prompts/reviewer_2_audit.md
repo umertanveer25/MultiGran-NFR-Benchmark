@@ -80,3 +80,10 @@ Audit any "first" claim against literature evidence.
 - **OpenAlex Verification**: All baseline candidate papers must be discovered and verified through the OpenAlex scholarly database (`/literature-search-openalex`).
 - **Anchor Baseline**: The primary pure base paper for this benchmark is Abbas et al. (*IEEE Access*, 2024, OpenAlex: `W4401990274`), alongside Xanthopoulou et al. (*Springer LNNS*, 2025, OpenAlex: `W4408287838`) and Rahman et al. (*Elsevier ESWA*, 2026, OpenAlex: `W7160260692`).
 
+---
+
+# 9. MANDATORY COMMON BASE DATASET RULE (APPLE-TO-APPLE COMPARISON)
+- **Base Dataset Anchor**: Whichever of the 3 authentic software requirements datasets (`Promise_Exp.csv`, `nfr.csv`, or `FNFC.csv`) the primary Base Paper evaluated on (e.g., `Promise_Exp.csv` in Abbas et al., 2024), that EXACT same dataset MUST be used for the primary comparative benchmark (Table 2) across our proposed model, the base paper, and all comparative SOTA baselines.
+- **Cross-Dataset Generalization**: The framework should additionally evaluate on the other two authentic datasets to demonstrate generalizability, while keeping the main comparative benchmark strictly anchored to the base paper's dataset.
+- **Verification Question**: Are the baseline metrics and proposed model metrics computed on the identical corpus partition, guaranteeing a direct, unskewed apple-to-apple comparison? (Yes / No — explain evidence).
+

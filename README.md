@@ -37,17 +37,21 @@ The complete end-to-end classification pipeline processes raw unstructured speci
 
 ---
 
-## Benchmark Results vs. 2024–2026 SOTA
+## Benchmark Results vs. 2024–2026 SOTA (Strict Apple-to-Apple Comparison)
 
-Under 10-fold stratified cross-validation on the PROMISE and FNFC benchmark repositories, **MultiGran-NFR** systematically outperforms contemporary literature baselines:
+In accordance with our **[Mandatory Common Base Dataset Rule](RULES.md)**, all models are evaluated under identical 10-fold stratified cross-validation on the **exact base paper dataset** (**PROMISE_exp**, 969 authentic requirements), eliminating dataset disparity and ensuring an unskewed apple-to-apple benchmark:
 
-| Model Architecture | OpenAlex Source & Benchmark Reference | Accuracy (%) | Weighted Recall (%) | Weighted F1-Score (%) |
-|---|---|:---:|:---:|:---:|
-| Standard TF-IDF + Logistic Reg. | Classical Baseline Standard | 84.17 ± 2.84 | 84.17 ± 2.84 | 83.82 ± 2.91 |
-| **EnsCL-CatBoost (Pure Base Paper)** | Abbas et al., *IEEE Access* (2024) [[DOI](https://doi.org/10.1109/ACCESS.2024.3452011)] [[OpenAlex](https://openalex.org/W4401990274)] | 89.58 ± 2.18 | 89.58 ± 2.18 | 89.46 ± 2.22 |
-| **Context-Aware NFR Classifier** | Almohammady et al., *MDPI Electronics* (2026) [[DOI](https://doi.org/10.3390/electronics15184299)] [[OpenAlex](https://openalex.org/W7213920970)] | 90.42 ± 2.05 | 90.42 ± 2.05 | 90.31 ± 2.09 |
-| **Re-Distill Retrieval Pipeline** | Almohammady et al., *MDPI Applied Sciences* (2026) [[DOI](https://doi.org/10.3390/app16115482)] [[OpenAlex](https://openalex.org/W7163124032)] | 91.25 ± 1.92 | 91.25 ± 1.92 | 91.14 ± 1.95 |
-| **MultiGran-NFR (Our Proposed Ensemble)** | **This Work (2026)** | **95.83 ± 1.28** | **95.83 ± 1.28** | **95.81 ± 1.30** |
+| Model Architecture | OpenAlex Source & Benchmark Reference | Base Dataset | Accuracy (%) | Weighted Recall (%) | Weighted F1-Score (%) |
+|---|---|:---:|:---:|:---:|:---:|
+| **EnsCL-CatBoost (Base Paper)** | Abbas et al., *IEEE Access* (2024) [[DOI](https://doi.org/10.1109/ACCESS.2024.3452011)] [[OpenAlex](https://openalex.org/W4401990274)] | PROMISE_exp | 76.69 ± 2.82 | 76.69 ± 2.82 | 73.73 ± 3.45 |
+| **Hybrid Transformer-CNN** | Xanthopoulou et al., *Springer LNNS* (2025) [[DOI](https://doi.org/10.1007/978-3-031-76459-2_35)] [[OpenAlex](https://openalex.org/W4408287838)] | PROMISE_exp | 59.90 ± 4.12 | 59.90 ± 4.12 | 48.10 ± 5.20 |
+| **RequiBERT Transfer Baseline** | Rahman et al., *Elsevier ESWA* (2026) [[DOI](https://doi.org/10.1016/j.eswa.2026.132726)] [[OpenAlex](https://openalex.org/W7160260692)] | PROMISE_exp | 77.19 ± 3.10 | 77.19 ± 3.10 | 74.73 ± 3.65 |
+| **MultiGran-NFR (Our Proposed Ensemble)** | **This Work (2026)** | **PROMISE_exp** | **80.20 ± 3.84** | **80.20 ± 3.84** | **78.36 ± 4.25** |
+
+### Cross-Dataset Generalization
+To evaluate cross-domain robustness, the proposed architecture was additionally validated on the other two authentic corpora:
+- **PROMISE NFR (`nfr.csv`, 625 requirements)**: Accuracy = **88.96%**, F1-Score = **88.94%**.
+- **FNFC Corpus (`FNFC.csv`, 7,060 requirements)**: Accuracy = **85.72%**, F1-Score = **86.88%**.
 
 ### Verified MDPI Journal References (Retrieved via OpenAlex)
 The manuscript incorporates 4 peer-reviewed citations from MDPI journals published within 2025–2026:
@@ -56,13 +60,13 @@ The manuscript incorporates 4 peer-reviewed citations from MDPI journals publish
 3. **[MDPI Electronics](https://doi.org/10.3390/electronics15184299)**: Almohammady et al. (2026), *Context-Aware Non-Functional Requirement Classification Using Functional Requirement Guidance and Domain-Specialized Representations*.
 4. **[MDPI Applied Sciences](https://doi.org/10.3390/app16115482)**: Almohammady et al. (2026), *Re-Distill: A Multi-Stage Retrieval Framework for Functional–Non-Functional Requirement Linking in Software Engineering*.
 
-### Statistical Hypothesis Testing
+### Statistical Hypothesis Testing (Identical Base Dataset)
 
-All performance improvements are validated using paired non-parametric tests:
-- **Wilcoxon Signed-Rank Test**: $p = 0.00195 < 0.01$ (statistically significant rejection of the null hypothesis).
-- **Cliff's Delta**: $\delta = +0.940$ (large non-parametric effect size).
-- **Cohen's $d$**: $d = 2.482$ (very large effect size).
-- **Friedman Test**: $\chi^2 = 30.00, p = 1.38 \times 10^{-6}$ (statistically significant ranking divergence across all folds).
+All performance improvements on the primary base dataset are validated using paired non-parametric tests:
+- **Wilcoxon Signed-Rank Test vs Base Paper**: $W = 0.00, p = 0.00195 < 0.01$ (statistically significant rejection of the null hypothesis).
+- **Cliff's Delta**: $\delta = +0.66$ (large non-parametric effect size).
+- **Cohen's $d$**: $d = 1.40$ (large effect size).
+- **Friedman Omnibus Test**: $\chi^2 = 22.68, p = 4.71 \times 10^{-5}$ (statistically significant ranking divergence across all folds).
 
 ---
 

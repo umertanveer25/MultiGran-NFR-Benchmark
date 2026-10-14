@@ -1,9 +1,8 @@
-| Dataset Specification | Description / Value |
-|---|---|
-| Primary Corpora | PROMISE Software Engineering Repository, PROMISE-NFR, FNFC Benchmark |
-| Domain Scope | Software Requirements Engineering (Functional vs. Non-Functional Specifications) |
-| Total Annotated Instances | 240 Requirements Statements |
-| Target Classes | 5 Classes: Functional (FR), Security (SE), Performance (PE), Usability (US), Maintainability (MN) |
-| Class Balance | Uniformly Stratified (48 samples per category) |
-| Vocabulary Dimension | 4,000 sublinear TF-IDF features across unigram, bigram, and trigram representations |
-| Partitioning Protocol | 10-Fold Stratified Cross-Validation (Zero Data Leakage Protocol) |
+| Dataset Specification | Primary Base Paper Dataset | Cross-Validation Corpus 1 | Cross-Validation Corpus 2 | Unified Deduplicated Benchmark |
+|---|---|---|---|---|
+| Repository Name | **PROMISE_exp** (Base Paper Anchor) | **PROMISE NFR** (nfr.csv) | **FNFC Corpus** | **Unified Multi-Project Corpus** |
+| Publication / Origin | PROMISE SE Repository | TerpConnect / PROMISE | Dalpiaz et al. / FNFC | Combined Authentic Benchmark |
+| Total Annotated Samples | 969 requirements | 625 requirements | 7,060 requirements | 7,855 unique requirements |
+| Evaluated Classes | 5 Classes (FR, SE, US, O, PE) | 5 Classes (FR, US, SE, O, PE) | 5 Classes (FR, SE, AU, P, A) | 5 Canonical Classes |
+| Evaluation Protocol | 10-Fold Stratified Cross-Validation | 5-Fold Stratified Validation | 5-Fold Stratified Validation | Zero Data Leakage Isolated Folds |
+| Empirical Role | **Apple-to-Apple Baseline Comparison** | Generalization Verification | Scalability Verification | Complete Industrial Coverage |

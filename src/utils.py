@@ -1,11 +1,14 @@
 """
-Utility helpers for benchmark corpus creation, reproducibility, and logging.
+Utility helpers for benchmark corpus loading, real dataset ingestion, reproducibility, and logging.
+Strictly adheres to the Mandatory Common Dataset Rule for Apple-to-Apple Comparison:
+All baselines and proposed architectures are evaluated on the authentic PROMISE / FNFC corpora.
 """
 
 import os
 import random
 import numpy as np
 import pandas as pd
+from pathlib import Path
 
 def set_seed(seed=42):
     """Ensure strict cross-platform reproducibility."""
@@ -13,76 +16,111 @@ def set_seed(seed=42):
     np.random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
 
-def generate_benchmark_corpus():
+def clean_requirement_text(s):
+    """Clean quotation marks and extraneous whitespace from requirement strings."""
+    if not isinstance(s, str):
+        return ""
+    s = s.strip()
+    if len(s) >= 2 and s[0] == "'" and s[-1] == "'":
+        s = s[1:-1].strip()
+    if len(s) >= 2 and s[0] == '"' and s[-1] == '"':
+        s = s[1:-1].strip()
+    return s
+
+def get_data_dir():
+    """Locate data directory relative to module root or fall back to B:/Dataset."""
+    pkg_data = Path(__file__).resolve().parent.parent / "data"
+    if pkg_data.exists():
+        return pkg_data
+    b_data = Path("B:/Dataset")
+    if b_data.exists():
+        return b_data
+    return pkg_data
+
+def load_authentic_dataset(name="unified", top_n_classes=5):
     """
-    Generate or load the PROMISE/FNFC requirement dataset across 5 canonical classes:
-    Functional (FR), Security (SE), Performance (PE), Usability (US), Maintainability (MN).
+    Load authentic software requirements corpora for apple-to-apple benchmarking.
+    Options:
+      - 'unified': 7,855 deduplicated requirements across PROMISE_exp, nfr, and FNFC.
+      - 'promise_exp': 969 authentic requirements from PROMISE_exp.
+      - 'promise_nfr': 625 authentic requirements from PROMISE nfr.
+      - 'fnfc': 7,060 authentic requirements from FNFC.
     """
-    templates = {
-        'Functional (FR)': [
-            "The system shall authenticate the user credentials against the corporate directory service.",
-            "The application shall export analytical report summaries to CSV and PDF formats.",
-            "The user shall be allowed to search the product inventory by SKU, brand, and category.",
-            "The payment processing gateway must dispatch transactional confirmation emails to customers.",
-            "The mobile interface shall display real-time sensor telemetry on the operations dashboard.",
-            "The database engine shall maintain transaction atomicity across distributed nodes.",
-            "The software shall generate unique alphanumeric tracking codes for each order.",
-            "The system must validate incoming REST payload schemas before triggering workflow events."
-        ],
-        'Security (SE)': [
-            "All data at rest and in transit shall be encrypted using AES-256 and TLS 1.3 protocol standards.",
-            "User sessions must automatically terminate after fifteen minutes of client-side inactivity.",
-            "The system shall sanitize all HTTP input parameters to prevent SQL injection and XSS exploits.",
-            "Role-based access control must restrict administrative endpoints to authenticated administrators.",
-            "Multi-factor authentication shall be enforced for all off-premise system access attempts.",
-            "Cryptographic keys shall be rotated every ninety days via an automated key management service.",
-            "The security module shall log all failed login attempts and flag anomalous brute-force attacks.",
-            "Sensitive customer identifiers must be masked before storage in system audit logs."
-        ],
-        'Performance (PE)': [
-            "The API server shall process 95 percent of incoming transactional queries in less than 200 ms.",
-            "The application architecture shall horizontally scale to support twenty thousand concurrent sessions.",
-            "Batch database synchronization must complete during the off-peak maintenance window within two hours.",
-            "Memory consumption shall remain strictly below two gigabytes during peak processing loads.",
-            "Search queries against two million records must return relevant matches within 150 milliseconds.",
-            "Network throughput between distributed microservices must maintain at least one gigabit per second.",
-            "System latency under synthetic stress load must not exceed 500 ms at the 99th percentile.",
-            "The real-time streaming engine shall process ten thousand inbound telemetry packets per second."
-        ],
-        'Usability (US)': [
-            "The user interface must strictly conform to WCAG 2.1 AA accessibility compliance standards.",
-            "First-time end users shall be able to complete a standard onboarding flow in under five minutes.",
-            "System error notifications must display contextual, human-readable troubleshooting guidance.",
-            "The web layout shall automatically adapt to mobile, tablet, and desktop display viewports.",
-            "Visual contrast ratios between text elements and background panels must exceed 4.5 to 1.",
-            "Interactive form controls must support keyboard-only navigation and full screen-reader accessibility.",
-            "System workflows must confirm destructive actions with a two-step explicit confirmation dialog.",
-            "The application shall provide multilingual localization support for English, Spanish, and French."
-        ],
-        'Maintainability (MN)': [
-            "Source code modules shall exhibit a cyclomatic complexity score of no greater than twelve.",
-            "All public API contracts and internal service interfaces must be fully documented using OpenAPI 3.0.",
-            "Microservices must communicate via standardized gRPC protocols with zero circular dependencies.",
-            "Unit test coverage for core business domain logic must remain equal to or exceed 85 percent.",
-            "Database migrations shall be scripted, version-controlled, and fully idempotent for automated deployment.",
-            "The software architecture must decouple business rules from specific external storage dependencies.",
-            "Configuration parameters must be managed externally via environment variables and configuration maps.",
-            "Diagnostic logs must follow standardized structured JSON format with distributed correlation IDs."
-        ]
+    data_dir = get_data_dir()
+    
+    if name.lower() in ["promise_exp", "exp"]:
+        file_path = data_dir / "Promise_Exp.csv"
+        if not file_path.exists():
+            file_path = Path("B:/Dataset/Promise_Exp.csv")
+        df_raw = pd.read_csv(file_path, encoding='latin-1')
+        df = pd.DataFrame({
+            'requirement': df_raw['Requirement'].apply(clean_requirement_text),
+            'category': df_raw['Type'].astype(str).str.strip(),
+            'source': 'PROMISE_exp'
+        })
+    elif name.lower() in ["promise_nfr", "nfr"]:
+        file_path = data_dir / "nfr.csv"
+        if not file_path.exists():
+            file_path = Path("B:/Dataset/nfr.csv")
+        df_raw = pd.read_csv(file_path, encoding='latin-1')
+        df = pd.DataFrame({
+            'requirement': df_raw['RequirementText'].apply(clean_requirement_text),
+            'category': df_raw['class'].astype(str).str.strip(),
+            'source': 'PROMISE_nfr'
+        })
+    elif name.lower() in ["fnfc"]:
+        file_path = data_dir / "FNFC.csv"
+        if not file_path.exists():
+            file_path = Path("B:/Dataset/FNFC.csv")
+        df_raw = pd.read_csv(file_path, encoding='latin-1')
+        df = pd.DataFrame({
+            'requirement': df_raw['text'].apply(clean_requirement_text),
+            'category': df_raw['class'].astype(str).str.strip(),
+            'source': 'FNFC'
+        })
+    else:  # unified
+        file_path = data_dir / "promise_fnfc_benchmark.csv"
+        if file_path.exists():
+            df = pd.read_csv(file_path, encoding='utf-8')
+        else:
+            # Reconstruct from source CSVs
+            df_exp = load_authentic_dataset("promise_exp", top_n_classes=None)
+            df_nfr = load_authentic_dataset("promise_nfr", top_n_classes=None)
+            df_fnfc = load_authentic_dataset("fnfc", top_n_classes=None)
+            combined = pd.concat([df_exp, df_nfr, df_fnfc], ignore_index=True)
+            combined = combined[combined['requirement'].str.len() > 5]
+            combined['norm_text'] = combined['requirement'].str.lower()
+            df = combined.drop_duplicates(subset=['norm_text']).drop(columns=['norm_text']).reset_index(drop=True)
+
+    df = df[df['requirement'].str.len() > 5].copy()
+
+    # Canonical taxonomy label normalization
+    label_map = {
+        'F': 'Functional (FR)',
+        'FR': 'Functional (FR)',
+        'SE': 'Security (SE)',
+        'PE': 'Performance (PE)',
+        'US': 'Usability (US)',
+        'MN': 'Maintainability (MN)',
+        'M': 'Maintainability (MN)',
+        'O': 'Operational (O)',
+        'A': 'Availability (A)',
+        'LF': 'Look & Feel (LF)',
+        'SC': 'Scalability (SC)',
+        'FT': 'Fault Tolerance (FT)'
     }
-    samples, labels = [], []
-    for cat, base_texts in templates.items():
-        for text in base_texts:
-            samples.append(text)
-            labels.append(cat)
-            variations = [
-                f"It is required that {text.lower()}",
-                f"For system integrity, {text.lower()}",
-                f"Specification requirement: {text}",
-                f"Verification criteria: {text.lower()}",
-                f"The software solution must ensure that {text.lower()}"
-            ]
-            for v in variations:
-                samples.append(v)
-                labels.append(cat)
-    return pd.DataFrame({'requirement': samples, 'category': labels})
+    df['canonical_category'] = df['category'].map(lambda c: label_map.get(c, c))
+
+    if top_n_classes is not None and top_n_classes > 0:
+        top_cats = df['canonical_category'].value_counts().head(top_n_classes).index.tolist()
+        df = df[df['canonical_category'].isin(top_cats)].copy()
+        df['category'] = df['canonical_category']
+
+    return df.reset_index(drop=True)
+
+def generate_benchmark_corpus(dataset="unified", top_n_classes=5):
+    """
+    Standard interface to obtain the authentic benchmark dataframe.
+    Guarantees 100% authentic real-world software requirements data.
+    """
+    return load_authentic_dataset(name=dataset, top_n_classes=top_n_classes)
